@@ -49,7 +49,7 @@ def on_workflow_dispatch(version: str) -> None:
     branch = git_push(semver)
     repo = GH.get_repo(REPO)
     msg = f"Release {semver}"
-    repo.create_pull(title=msg, body=msg, head=branch, base="master")
+    repo.create_pull(title=msg, body=msg, head=branch, base="main")
 
 
 def on_pull_request(number: int) -> None:
@@ -135,7 +135,7 @@ def expand_versions(*, v: bool) -> List[str]:
 
 def create_release(repo: Repository, pr: PullRequest) -> None:
     notes = get_release_notes(pr)
-    release = "v" + current_version()
+    release = "v" + str(current_version())
     repo.create_git_release(
         tag=release, name=release, message=notes, target_commitish=pr.merge_commit_sha
     )
