@@ -153,7 +153,7 @@ def get_release_notes(pr: PullRequest) -> str:
 
 
 def update_docker_images() -> None:
-    repo = f"{DOCKER_USERNAME}/DOCKER_IMAGE"
+    repo = f"{DOCKER_USERNAME}/{DOCKER_IMAGE}"
     docker("build", "--tag", DOCKER_IMAGE, WORKSPACE)
     docker(
         "login",
