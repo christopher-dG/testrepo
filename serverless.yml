@@ -1,0 +1,38 @@
+service: TagBotWeb
+plugins:
+  - serverless-domain-manager
+  - serverless-pseudo-parameters
+  - serverless-python-requirements
+  - serverless-wsgi
+custom:
+  prod:
+    dev: false
+    prod: true
+  customDomain:
+    domainName: julia-tagbot.com
+    enabled: ${self:custom.prod.${opt:stage, 'dev'}}
+  reports: ${self:service}-${opt:stage, 'dev'}-reports
+  wsgi:
+    app: tagbot.web.app
+provider:
+  name: aws
+  runtime: python3.8
+  iamRoleStatements:
+    - Effect: Allow
+      Action: lambda:InvokeFunction
+      Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${self:custom.reports}
+  environment:
+    GITHUB_TOKEN: ${env:GITHUB_TOKEN}
+    REPORTS_FUNCTION: ${self:custom.reports}
+    TAGBOT_REPO: ${env:TAGBOT_REPO, 'JuliaRegistries/TagBot'}
+    TAGBOT_ISSUES_REPO: ${env:TAGBOT_ISSUES_REPO, 'JuliaRegistries/TagBotErrorReports'}
+functions:
+  api:
+    handler: wsgi_handler.handler
+    events:
+      - http: ANY /
+      - http: ANY /{any+}
+  reports:
+    handler: tagbot.web.reports.handler
+    reservedConcurrency: 1
+    timeout: 30
