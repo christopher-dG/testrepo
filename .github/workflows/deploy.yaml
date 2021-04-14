@@ -12,5 +12,7 @@ jobs:
         run: |
           git config --global user.name github-actions[bot]
           git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
-      - name: Deploy
-        run: bash ./bin/deploy.sh ${{ github.event.inputs.target }}
+          touch foo
+          git add foo
+          git commit -m hi
+          git push origin main
