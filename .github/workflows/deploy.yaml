@@ -1,19 +1,20 @@
 name: Deploy
 on:
+  push:
   workflow_dispatch:
-    inputs:
-      target:
 jobs:
-  deploy:
-    if: startsWith(github.event.pull_request.head.ref, 'release/')
+  matrix:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Git config
+      - id: jobs
         run: |
-          git config --global user.name github-actions[bot]
-          git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
-          touch foo
-          git add foo
-          git commit -m hi
-          git push origin main
+          echo '::set-output name=jobs::{"name": ["foo", "bar", "baz"]}'
+    outputs:
+      jobs: ${{ steps.jobs.outputs.jobs }}
+  foo:
+    runs-on: ubuntu-latest
+    needs: matrix
+    strategy:
+      matrix: ${{ fromJSON(needs.matrix.outputs.jobs) }}
+    steps:
+      - run: echo ${{ matrix.name }}
