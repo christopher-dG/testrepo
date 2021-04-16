@@ -6,6 +6,8 @@ jobs:
   matrix:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      - uses: mxschmitt/action-tmate@v3
       - id: jobs
         run: |
           echo '::set-output name=jobs::{"name": ["foo", "bar", "baz"]}'
