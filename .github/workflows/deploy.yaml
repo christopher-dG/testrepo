@@ -1,22 +1,17 @@
-name: Deploy
+name: Register Package
 on:
-  push:
   workflow_dispatch:
+    inputs:
+      version:
+        description: Version to register or component to bump
+        required: true
+      subdir:
+        description: hi
 jobs:
-  matrix:
+  register:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: mxschmitt/action-tmate@v3
-      - id: jobs
-        run: |
-          echo '::set-output name=jobs::{"name": ["foo", "bar", "baz"]}'
-    outputs:
-      jobs: ${{ steps.jobs.outputs.jobs }}
-  foo:
-    runs-on: ubuntu-latest
-    needs: matrix
-    strategy:
-      matrix: ${{ fromJSON(needs.matrix.outputs.jobs) }}
-    steps:
-      - run: echo ${{ matrix.name }}
+      - uses: julia-actions/RegisterAction@latest
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          registrator: asdfasdfasdfasdfasdfg
